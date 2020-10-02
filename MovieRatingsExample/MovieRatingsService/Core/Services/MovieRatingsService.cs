@@ -46,12 +46,12 @@ namespace MovieRatingsApplication.Core.Services
         // 2.
         public double GetAverageRateFromReviewer(int reviewer)
         {
-            List<int> AllPersonalRatingFromHam = RatingsRepository.GetAllMovieRatings().Where(r => r.Reviewer == reviewer).Select(r => r.Grade).ToList();
+            List<int> AllPersonalRatingFromPerson = RatingsRepository.GetAllMovieRatings().Where(r => r.Reviewer == reviewer).Select(r => r.Grade).ToList();
             double sumOfRatings = 0; 
-            AllPersonalRatingFromHam.ForEach(r => sumOfRatings += r);
-            if(AllPersonalRatingFromHam.Count > 0)
+            AllPersonalRatingFromPerson.ForEach(r => sumOfRatings += r);
+            if(AllPersonalRatingFromPerson.Count > 0)
             {
-                return sumOfRatings / AllPersonalRatingFromHam.Count;
+                return sumOfRatings / AllPersonalRatingFromPerson.Count;
             }
             return 0;
         }
@@ -59,8 +59,8 @@ namespace MovieRatingsApplication.Core.Services
         // 3.
         public int GetNumberOfRatesByReviewer(int reviewer, int rate)
         {
-            List<int> AllPersonalRatingFromHam = RatingsRepository.GetAllMovieRatings().Where(r => r.Reviewer == reviewer && r.Grade == rate).Select(r => r.Grade).ToList();
-            return AllPersonalRatingFromHam.Count();
+            List<int> AllPersonalRatingFromPerson = RatingsRepository.GetAllMovieRatings().Where(r => r.Reviewer == reviewer && r.Grade == rate).Select(r => r.Grade).ToList();
+            return AllPersonalRatingFromPerson.Count();
         }
 
         // 4.
@@ -85,8 +85,8 @@ namespace MovieRatingsApplication.Core.Services
         // 6.
         public int GetNumberOfRates(int movie, int rate)
         {
-            List<int> AllPersonalRatingFromHam = RatingsRepository.GetAllMovieRatings().Where(m => m.Movie == movie && m.Grade == rate).Select(r => r.Grade).ToList();
-            return AllPersonalRatingFromHam.Count();
+            List<int> AllPersonalRatingFromFilm = RatingsRepository.GetAllMovieRatings().Where(m => m.Movie == movie && m.Grade == rate).Select(r => r.Grade).ToList();
+            return AllPersonalRatingFromFilm.Count();
         }
 
         // 7.
@@ -136,6 +136,20 @@ namespace MovieRatingsApplication.Core.Services
             List<int> AllRatedMovies = list.OrderByDescending(x => x.MovieAverageScore).Select(x => x.Movie).ToList();
 
            return AllRatedMovies.Take(amount).ToList();
+        }
+
+        // 10.
+        public List<int> GetTopMoviesByReviewer(int reviewer)
+        {
+            IList<MovieRating> ratings = RatingsRepository.GetAllMovieRatings().Where(mr => mr.Reviewer == reviewer).ToList();
+            return ratings.OrderByDescending(mr => mr.Grade).ThenBy(mr => mr.Date).Select(mr => mr.Movie).ToList();
+        }
+
+        // 11.
+        public List<int> GetReviewersByMovie(int movie)
+        {
+            IList<MovieRating> ratings = RatingsRepository.GetAllMovieRatings().Where(mr => mr.Movie == movie).ToList();
+            return ratings.OrderByDescending(mr => mr.Grade).ThenBy(mr => mr.Date).Select(mr => mr.Reviewer).ToList();
         }
     }
 }

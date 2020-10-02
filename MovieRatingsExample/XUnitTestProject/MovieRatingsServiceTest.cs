@@ -242,7 +242,7 @@ namespace XUnitTestProject
                 new MovieRating(2, 2, 5, DateTime.Now),
 
                 new MovieRating(2, 3, 5, DateTime.Now),
-                new MovieRating(3, 3, 5, DateTime.Now),
+                new MovieRating(3, 3, 5, DateTime.Now)
             };
 
             MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
@@ -275,7 +275,7 @@ namespace XUnitTestProject
                 new MovieRating(2, 3, 5, DateTime.Now),
                 new MovieRating(2, 4, 5, DateTime.Now),
 
-                new MovieRating(3, 3, 5, DateTime.Now),
+                new MovieRating(3, 3, 5, DateTime.Now)
             };
 
             MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
@@ -309,7 +309,6 @@ namespace XUnitTestProject
                 new MovieRating(3, 3, 5, DateTime.Now),
 
                 new MovieRating(2, 4, 5, DateTime.Now)
-
             };
 
             MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
@@ -324,32 +323,68 @@ namespace XUnitTestProject
             repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
         }
 
-        //// 10. On input N, what are the movies that reviewer N has reviewed? The list should be sorted decreasing by rate first, and date secondly.
-        //public List<int> GetTopMoviesByReviewer(int reviewer)
-        //{
-        //    // arrange
+        // 10. On input N, what are the movies that reviewer N has reviewed? The list should be sorted decreasing by rate first, and date secondly.
+        [Fact]
+        public void GetTopMoviesByReviewer()
+        {
+            // arrange
+            ratings = new List<MovieRating>()
+            {
+                new MovieRating(2, 1, 5, DateTime.Now),
+                new MovieRating(3, 1, 4, DateTime.Now),
+                new MovieRating(3, 2, 5, DateTime.Now.AddDays(-1)),
+                new MovieRating(3, 3, 5, DateTime.Now.AddDays(-2)),
+                new MovieRating(4, 4, 4, DateTime.Now)
+            };
 
+            MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
 
-        //    // act
+            List<int> expected = new List<int>() {  };
+            List<int> expected2 = new List<int>() { 1 };
+            List<int> expected3 = new List<int>() { 3, 2, 1 };
 
+            // act
+            var result = mrs.GetTopMoviesByReviewer(1);
+            var result2 = mrs.GetTopMoviesByReviewer(2);
+            var result3 = mrs.GetTopMoviesByReviewer(3);
 
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
-        //}
+            // assert
+            Assert.Equal(expected, result);
+            Assert.Equal(expected2, result2);
+            Assert.Equal(expected3, result3);
+            repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Exactly(3));
+        }
 
-        //// 11. On input N, who are the reviewers that have reviewed movie N? The list should be sorted decreasing by rate first, and date secondly.
-        //public List<int> GetReviewersByMovie(int movie)
-        //{
-        //    // arrange
+        // 11. On input N, who are the reviewers that have reviewed movie N? The list should be sorted decreasing by rate first, and date secondly.
+        [Fact]
+        public void GetReviewersByMovie()
+        {
+            // arrange
+            ratings = new List<MovieRating>()
+            {
+                new MovieRating(1, 2, 3, DateTime.Now),
+                new MovieRating(2, 3, 4, DateTime.Now),
+                new MovieRating(3, 3, 5, DateTime.Now.AddDays(-1)),
+                new MovieRating(4, 3, 5, DateTime.Now.AddDays(-2)),
+                new MovieRating(5, 4, 4, DateTime.Now)
+            };
 
+            MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
 
-        //    // act
+            List<int> expected = new List<int>() {  };
+            List<int> expected2 = new List<int>() { 1 };
+            List<int> expected3 = new List<int>() { 4, 3, 2 };
 
+            // act
+            var result = mrs.GetReviewersByMovie(1);
+            var result2 = mrs.GetReviewersByMovie(2);
+            var result3 = mrs.GetReviewersByMovie(3);
 
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
-        //}
+            // assert
+            Assert.Equal(expected, result);
+            Assert.Equal(expected2, result2);
+            Assert.Equal(expected3, result3);
+            repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Exactly(3));
+        }
     }
 }
