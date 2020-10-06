@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,12 +12,12 @@ namespace MovieRatingsApplication.Core.Model
         public int Grade { get; private set; }
         public DateTime Date { get; private set; }
 
-      public MovieRating(int r, int m, int g, DateTime d)
+        public MovieRating(int reviewer, int movie, int grade, DateTime date)
         {
-            Reviewer = r;
-            Movie = m;
-            Grade = g;
-            Date = d;
+            this.Reviewer = reviewer;
+            this.Movie = movie;
+            this.Grade = grade;
+            this.Date = date;
         }
     }
 }
