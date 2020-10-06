@@ -1,88 +1,71 @@
-using FluentAssertions;
-using Moq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MovieRatingsApplication.Core.Data;
 using MovieRatingsApplication.Core.Interfaces;
-using MovieRatingsApplication.Core.Model;
 using MovieRatingsApplication.Core.Services;
 using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
-using Xunit;
 
-namespace XUnitTestProject
+namespace MSUnitPerformanceTest
 {
-    public class MovieRatingsServiceTestPerformanceTest
+    [TestClass]
+    public class MovieRatingsServicePerformanceTest
     {
-        private IMovieRatingsRepository Repo;
-        private Stopwatch Stopwatch;
-        private int MaxExecutionTime = 4000;
+        private static IMovieRatingsRepository Repo;
 
-        public MovieRatingsServiceTestPerformanceTest()
+        [ClassInitialize]
+        public static void SetUpTest(TestContext tc)
         {
             Repo = new MovieRatingsRepository();
-            Stopwatch = new Stopwatch();
         }
 
-        // returns the number movies which have got the grade N
-
-        [Theory]
-        [InlineData(1, 104874)]
-        [InlineData(3, 281782)]
-        [InlineData(5, 280395)]
+        [TestMethod(), Timeout(4000)]
+        [DataRow(1, 104874)]
+        [DataRow(3, 281782)]
+        [DataRow(5, 280395)]
         public void NumberOfMoviesWithGrade(int grade, int expected)
         {
             // arrange
-            Stopwatch.Start();
             MovieRatingsService mrs = new MovieRatingsService(Repo);
 
             // act
             int result = mrs.NumberOfMoviesWithGrade(grade);
-            Stopwatch.Stop();
 
             // assert
-            Assert.Equal(expected, result);
-            Assert.True(MaxExecutionTime > Stopwatch.ElapsedMilliseconds);
+            Assert.AreEqual(expected, result);
         }
 
         //  1. On input N, what are the number of reviews from reviewer N?
-        [Theory]
-        [InlineData(1, 547)]
-        [InlineData(417, 1465)]
-        [InlineData(931, 1809)]
+        [TestMethod(), Timeout(4000)]
+        [DataRow(1, 547)]
+        [DataRow(417, 1465)]
+        [DataRow(931, 1809)]
         public void GetNumberOfReviewsFromReviewer(int reviewer, int expected)
         {
             // arrange
-            Stopwatch.Start();
             MovieRatingsService mrs = new MovieRatingsService(Repo);
 
             // act
             int result = mrs.GetNumberOfReviewsFromReviewer(reviewer);
-            Stopwatch.Stop();
 
             // assert
-            Assert.Equal(expected, result);
-            Assert.True(MaxExecutionTime > Stopwatch.ElapsedMilliseconds);
+            Assert.AreEqual(expected, result);
         }
 
         // 2. On input N, what is the average rate that reviewer N had given?
-        [Theory]
-        [InlineData(2, 3.5586)]
-        [InlineData(317, 3.000)]
-        [InlineData(899, 3.4974)]
+        [TestMethod(), Timeout(4000)]
+        [DataRow(2, 3.5586)]
+        [DataRow(317, 3.000)]
+        [DataRow(899, 3.4974)]
         public void GetAverageRateFromReviewer(int reviewer, double expected)
         {
             // arrange
-            Stopwatch.Start();
             MovieRatingsService mrs = new MovieRatingsService(Repo);
 
             // act
             double result = Double.Parse(mrs.GetAverageRateFromReviewer(reviewer).ToString("0.####"));
-            Stopwatch.Stop();
 
             // assert
-            Assert.Equal(expected, result);
-            Assert.True(MaxExecutionTime > Stopwatch.ElapsedMilliseconds);
+            Assert.AreEqual(expected, result);
         }
 
         //// 3. On input N and R, how many times has reviewer N given rate R?
@@ -346,5 +329,10 @@ namespace XUnitTestProject
         //    Assert.Equal(expected3, result3);
         //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Exactly(3));
         //}
+
+
+
+
+
     }
 }
