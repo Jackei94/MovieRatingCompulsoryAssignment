@@ -179,73 +179,37 @@ namespace MSUnitPerformanceTest
             CollectionAssert.AreEqual(expected, result);
         }
 
-        //// 10. On input N, what are the movies that reviewer N has reviewed? The list should be sorted decreasing by rate first, and date secondly.
-        //[Fact]
-        //public void GetTopMoviesByReviewer()
-        //{
-        //    // arrange
-        //    ratings = new List<MovieRating>()
-        //    {
-        //        new MovieRating(2, 1, 5, DateTime.Now),
-        //        new MovieRating(3, 1, 4, DateTime.Now),
-        //        new MovieRating(3, 2, 5, DateTime.Now.AddDays(-1)),
-        //        new MovieRating(3, 3, 5, DateTime.Now.AddDays(-2)),
-        //        new MovieRating(4, 4, 4, DateTime.Now)
-        //    };
-
-        //    MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
-
-        //    List<int> expected = new List<int>() {  };
-        //    List<int> expected2 = new List<int>() { 1 };
-        //    List<int> expected3 = new List<int>() { 3, 2, 1 };
-
-        //    // act
-        //    var result = mrs.GetTopMoviesByReviewer(1);
-        //    var result2 = mrs.GetTopMoviesByReviewer(2);
-        //    var result3 = mrs.GetTopMoviesByReviewer(3);
-
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    Assert.Equal(expected2, result2);
-        //    Assert.Equal(expected3, result3);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Exactly(3));
-        //}
-
-        //// 11. On input N, who are the reviewers that have reviewed movie N? The list should be sorted decreasing by rate first, and date secondly.
-        //[Fact]
-        //public void GetReviewersByMovie()
-        //{
-        //    // arrange
-        //    ratings = new List<MovieRating>()
-        //    {
-        //        new MovieRating(1, 2, 3, DateTime.Now),
-        //        new MovieRating(2, 3, 4, DateTime.Now),
-        //        new MovieRating(3, 3, 5, DateTime.Now.AddDays(-1)),
-        //        new MovieRating(4, 3, 5, DateTime.Now.AddDays(-2)),
-        //        new MovieRating(5, 4, 4, DateTime.Now)
-        //    };
-
-        //    MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
-
-        //    List<int> expected = new List<int>() {  };
-        //    List<int> expected2 = new List<int>() { 1 };
-        //    List<int> expected3 = new List<int>() { 4, 3, 2 };
-
-        //    // act
-        //    var result = mrs.GetReviewersByMovie(1);
-        //    var result2 = mrs.GetReviewersByMovie(2);
-        //    var result3 = mrs.GetReviewersByMovie(3);
-
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    Assert.Equal(expected2, result2);
-        //    Assert.Equal(expected3, result3);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Exactly(3));
-        //}
+        // 10. On input N, what are the movies that reviewer N has reviewed? The list should be sorted decreasing by rate first, and date secondly.
+        [TestMethod(), Timeout(4000)]
+        [DataRow()]
+        public void GetTopMoviesByReviewer()
+        {
+            // arrange
+            MovieRatingsService mrs = new MovieRatingsService(Repo);
+            List<int> expected = new List<int>() {565510, 823941, 471578, 2137809, 912999};
 
 
+            // act
+            var result = mrs.GetTopMoviesByReviewer(ReviewerWithMostReviews).GetRange(0,5);
 
+            // assert
+            CollectionAssert.AreEqual(expected, result);
+        }
 
+        // 11. On input N, who are the reviewers that have reviewed movie N? The list should be sorted decreasing by rate first, and date secondly.
+        [TestMethod(), Timeout(4000)]
+        [DataRow()]
+        public void GetReviewersByMovie()
+        {
+            // arrange
+            MovieRatingsService mrs = new MovieRatingsService(Repo);
+            List<int> expected = new List<int>() {708, 199, 208, 501, 83 };
 
+            // act
+            var result = mrs.GetReviewersByMovie(MovieWithMostReviews).GetRange(0,5);
+
+            // assert
+            CollectionAssert.AreEqual(expected, result);
+        }
     }
 }
