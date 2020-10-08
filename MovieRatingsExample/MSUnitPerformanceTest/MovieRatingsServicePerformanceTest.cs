@@ -3,6 +3,7 @@ using MovieRatingsApplication.Core.Data;
 using MovieRatingsApplication.Core.Interfaces;
 using MovieRatingsApplication.Core.Services;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace MSUnitPerformanceTest
@@ -12,6 +13,10 @@ namespace MSUnitPerformanceTest
     {
         private static IMovieRatingsRepository Repo;
 
+        //Denne data kom fra TestFixture i Comp1 code samples på moodle
+        private const int ReviewerWithMostReviews = 571;
+        private const int MovieWithMostReviews = 305344;
+
         [ClassInitialize]
         public static void SetUpTest(TestContext tc)
         {
@@ -20,8 +25,6 @@ namespace MSUnitPerformanceTest
 
         [TestMethod(), Timeout(4000)]
         [DataRow(1, 104874)]
-        [DataRow(3, 281782)]
-        [DataRow(5, 280395)]
         public void NumberOfMoviesWithGrade(int grade, int expected)
         {
             // arrange
@@ -36,9 +39,7 @@ namespace MSUnitPerformanceTest
 
         //  1. On input N, what are the number of reviews from reviewer N?
         [TestMethod(), Timeout(4000)]
-        [DataRow(1, 547)]
-        [DataRow(417, 1465)]
-        [DataRow(931, 1809)]
+        [DataRow(ReviewerWithMostReviews, 154832)]
         public void GetNumberOfReviewsFromReviewer(int reviewer, int expected)
         {
             // arrange
@@ -53,9 +54,7 @@ namespace MSUnitPerformanceTest
 
         // 2. On input N, what is the average rate that reviewer N had given?
         [TestMethod(), Timeout(4000)]
-        [DataRow(2, 3.5586)]
-        [DataRow(317, 3.000)]
-        [DataRow(899, 3.4974)]
+        [DataRow(ReviewerWithMostReviews, 3.9626)]
         public void GetAverageRateFromReviewer(int reviewer, double expected)
         {
             // arrange
@@ -68,203 +67,117 @@ namespace MSUnitPerformanceTest
             Assert.AreEqual(expected, result);
         }
 
-        //// 3. On input N and R, how many times has reviewer N given rate R?
-        //[Theory]
-        //[InlineData(1, 1, 0)]
-        //[InlineData(1, 2, 1)]
-        //[InlineData(2, 5, 3)]
-        //public void GetNumberOfRatesByReviewer(int reviewer, int rate, int expected)
-        //{
-        //    // arrange
-        //    ratings = new List<MovieRating>()
-        //    {
-        //        new MovieRating(1, 1, 2, DateTime.Now),
-        //        new MovieRating(2, 1, 5, DateTime.Now),
-        //        new MovieRating(2, 2, 5, DateTime.Now),
-        //        new MovieRating(2, 3, 5, DateTime.Now),
-        //        new MovieRating(3, 3, 5, DateTime.Now)
-        //    };
+        // 3. On input N and R, how many times has reviewer N given rate R?
+        [TestMethod(), Timeout(4000)]
+        [DataRow(ReviewerWithMostReviews, 3, 27886)]
+        public void GetNumberOfRatesByReviewer(int reviewer, int rate, int expected)
+        {
+            // arrange
+            MovieRatingsService mrs = new MovieRatingsService(Repo);
 
-        //    MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
+            // act
+            int result = mrs.GetNumberOfRatesByReviewer(reviewer, rate);
 
-        //    // act
-        //    int result = mrs.GetNumberOfRatesByReviewer(reviewer, rate);
+            // assert
+            Assert.AreEqual(expected, result);
+        }
 
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
-        //}
+        // 4. On input N, how many have reviewed movie N?
+        [TestMethod(), Timeout(4000)]
+        [DataRow(MovieWithMostReviews, 992)]
+        public void GetNumberOfReviews(int movie, int expected)
+        {
+            // arrange
+            MovieRatingsService mrs = new MovieRatingsService(Repo);
 
-        //// 4. On input N, how many have reviewed movie N?
-        //[Theory]
-        //[InlineData(1, 0)]
-        //[InlineData(2, 1)]
-        //[InlineData(3, 2)]
-        //public void GetNumberOfReviews(int movie, int expected)
-        //{
-        //    // arrange
-        //    ratings = new List<MovieRating>()
-        //    {
-        //        new MovieRating(1, 2, 2, DateTime.Now),
-        //        new MovieRating(2, 3, 3, DateTime.Now),
-        //        new MovieRating(3, 3, 4, DateTime.Now),
-        //        new MovieRating(3, 4, 5, DateTime.Now)
-        //    };
+            // act
+            int result = mrs.GetNumberOfReviews(movie);
 
-        //    MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
+            // assert
+            Assert.AreEqual(expected, result);
+        }
 
-        //    // act
-        //    int result = mrs.GetNumberOfReviews(movie);
+        // 5. On input N, what is the average rate the movie N had received?
+        [TestMethod(), Timeout(4000)]
+        [DataRow(MovieWithMostReviews, 1.8528225806451613)]
+        public void GetAverageRateOfMovie(int movie, double expected)
+        {
+            // arrange
+            MovieRatingsService mrs = new MovieRatingsService(Repo);
 
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
-        //}
+            // act
+            double result = mrs.GetAverageRateOfMovie(movie);
 
-        //// 5. On input N, what is the average rate the movie N had received?
-        //[Theory]
-        //[InlineData(1, 0.0)]
-        //[InlineData(2, 1.0)]
-        //[InlineData(3, 4.5)]
-        //public void GetAverageRateOfMovie(int movie, double expected)
-        //{
-        //    // arrange
-        //    ratings = new List<MovieRating>()
-        //    {
-        //        new MovieRating(1, 2, 1, DateTime.Now),
-        //        new MovieRating(2, 3, 4, DateTime.Now),
-        //        new MovieRating(2, 3, 5, DateTime.Now)
-        //    };
+            // assert
+            Assert.AreEqual(expected, result);
+        }
 
-        //    MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
+        // 6. On input N and R, how many times had movie N received rate R?
+        [TestMethod(), Timeout(4000)]
+        [DataRow(MovieWithMostReviews, 2, 193)]
+        public void GetNumberOfRates(int movie, int rate, int expected)
+        {
+            // arrange
+            MovieRatingsService mrs = new MovieRatingsService(Repo);
 
-        //    // act
-        //    double result = mrs.GetAverageRateOfMovie(movie);
+            //act
+            int result = mrs.GetNumberOfRates(movie, rate);
 
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
-        //}
+            // assert
+            Assert.AreEqual(expected, result);
+        }
 
-        //// 6. On input N and R, how many times had movie N received rate R?
-        //[Theory]
-        //[InlineData(1, 4, 0)]
-        //[InlineData(2, 5, 1)]
-        //[InlineData(3, 2, 2)]
-        //public void GetNumberOfRates(int movie, int rate, int expected)
-        //{
-        //    // arrange
-        //    ratings = new List<MovieRating>()
-        //    {
-        //        new MovieRating(1, 2, 5, DateTime.Now),
-        //        new MovieRating(1, 3, 2, DateTime.Now),
-        //        new MovieRating(2, 3, 2, DateTime.Now),
-        //        new MovieRating(5, 5, 3, DateTime.Now)
-        //    };
+        //  7. What is the id(s) of the movie(s) with the highest number of top rates (5)? 
+        [TestMethod(), Timeout(4000)]
+        [DataRow()]
+        public void GetMoviesWithHighestNumberOfTopRates()
+        {
+            // arange
+            MovieRatingsService mrs = new MovieRatingsService(Repo);
 
-        //    MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
+            List<int> expected = new List<int>() { 1664010 };
 
-        //    //act
-        //    int result = mrs.GetNumberOfRates(movie, rate);
+            // act
+            var result = mrs.GetMoviesWithHighestNumberOfTopRates();
 
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
-        //}
+            // assert
+            CollectionAssert.AreEqual(expected, result);
 
-        ////  7. What is the id(s) of the movie(s) with the highest number of top rates (5)? 
-        //[Fact]
-        //public void GetMoviesWithHighestNumberOfTopRates()
-        //{
-        //    ratings = new List<MovieRating>()
-        //    {
-        //        new MovieRating(1, 1, 5, DateTime.Now),
-        //        new MovieRating(1, 2, 5, DateTime.Now),
+        }
 
-        //        new MovieRating(2, 1, 4, DateTime.Now),
-        //        new MovieRating(2, 2, 5, DateTime.Now),
+        // 8. What reviewer(s) had done most reviews?
+        [TestMethod(), Timeout(4000)]
+        [DataRow()]
+        public void GetMostProductiveReviewers()
+        {
+            // arrange
+            MovieRatingsService mrs = new MovieRatingsService(Repo);
+            List<int> expected = new List<int>() { 571, 30, 457, 886, 758};
 
-        //        new MovieRating(2, 3, 5, DateTime.Now),
-        //        new MovieRating(3, 3, 5, DateTime.Now)
-        //    };
+            // act
+            var result = mrs.GetMostProductiveReviewers().GetRange(0,5);
 
-        //    MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
+            // assert
+            CollectionAssert.AreEqual(expected, result);
+        }
 
-        //    List<int> expected = new List<int>(){ 2, 3};
+        // 9. On input N, what is top N of movies? The score of a movie is its average rate.
+        [TestMethod(), Timeout(4000)]
+        [DataRow()]
+        public void GetTopRatedMovies()
+        {
+            // arrange
 
-        //    // act
-        //    var result = mrs.GetMoviesWithHighestNumberOfTopRates();
+            MovieRatingsService mrs = new MovieRatingsService(Repo);
 
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
+            List<int> expected = new List<int>() { 4, 1, 2, 3 };
 
-        //}
+            // act
+            var result = mrs.GetTopRatedMovies(5);
 
-        //// 8. What reviewer(s) had done most reviews?
-        //[Fact]
-        //public void GetMostProductiveReviewers()
-        //{
-        //    // arrange
-
-        //    ratings = new List<MovieRating>()
-        //    {
-        //        new MovieRating(1, 1, 5, DateTime.Now),
-        //        new MovieRating(1, 2, 5, DateTime.Now),
-        //        new MovieRating(1, 3, 5, DateTime.Now),
-
-        //        new MovieRating(2, 1, 4, DateTime.Now),
-        //        new MovieRating(2, 2, 5, DateTime.Now),
-        //        new MovieRating(2, 3, 5, DateTime.Now),
-        //        new MovieRating(2, 4, 5, DateTime.Now),
-
-        //        new MovieRating(3, 3, 5, DateTime.Now)
-        //    };
-
-        //    MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
-
-        //    List<int> expected = new List<int>() {2,1,3};
-
-        //    // act
-        //    var result = mrs.GetMostProductiveReviewers();
-
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
-        //}
-
-        //// 9. On input N, what is top N of movies? The score of a movie is its average rate.
-        //[Fact]
-        //public void GetTopRatedMovies()
-        //{
-        //    // arrange
-
-        //    ratings = new List<MovieRating>()
-        //    {
-        //        new MovieRating(1, 1, 5, DateTime.Now),
-        //        new MovieRating(2, 1, 4, DateTime.Now),
-
-        //        new MovieRating(1, 2, 3, DateTime.Now),
-        //        new MovieRating(2, 2, 4, DateTime.Now),
-
-        //        new MovieRating(1, 3, 2, DateTime.Now),
-        //        new MovieRating(2, 3, 3, DateTime.Now),
-        //        new MovieRating(3, 3, 5, DateTime.Now),
-
-        //        new MovieRating(2, 4, 5, DateTime.Now)
-        //    };
-
-        //    MovieRatingsService mrs = new MovieRatingsService(repoMock.Object);
-
-        //    List<int> expected = new List<int>() { 4,1,2,3 };
-
-        //    // act
-        //    var result = mrs.GetTopRatedMovies(4);
-
-        //    // assert
-        //    Assert.Equal(expected, result);
-        //    repoMock.Verify(repo => repo.GetAllMovieRatings(), Times.Once);
-        //}
+            // assert
+            Assert.AreEqual(expected, result);
+        }
 
         //// 10. On input N, what are the movies that reviewer N has reviewed? The list should be sorted decreasing by rate first, and date secondly.
         //[Fact]
