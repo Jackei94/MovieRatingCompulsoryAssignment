@@ -170,13 +170,13 @@ namespace MSUnitPerformanceTest
 
             MovieRatingsService mrs = new MovieRatingsService(Repo);
 
-            List<int> expected = new List<int>() { 4, 1, 2, 3 };
+            List<int> expected = new List<int>() { 822109, 317050, 383247, 400162, 60343 };
 
             // act
-            var result = mrs.GetTopRatedMovies(5);
+            List<int> result = mrs.GetTopRatedMovies(5);
 
             // assert
-            Assert.AreEqual(expected, result);
+            CollectionAssert.AreEqual(expected, result);
         }
 
         //// 10. On input N, what are the movies that reviewer N has reviewed? The list should be sorted decreasing by rate first, and date secondly.

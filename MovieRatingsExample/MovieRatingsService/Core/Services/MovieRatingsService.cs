@@ -124,7 +124,7 @@ namespace MovieRatingsApplication.Core.Services
         }
 
         // 9.
-        public object GetTopRatedMovies(int amount)
+        public List<int> GetTopRatedMovies(int amount)
         {
             IList<MovieRating> ratings = RatingsRepository.GetAllMovieRatings();
 
